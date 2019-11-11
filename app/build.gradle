@@ -1,0 +1,96 @@
+apply plugin: 'com.android.application'
+//定义时间
+def getTime() {
+    return new Date().format("yyyyMMdd", TimeZone.getTimeZone("UTC"))
+}
+android {
+    compileSdkVersion 29
+    buildToolsVersion "29.0.2"
+    defaultConfig {
+        applicationId "com.study.mylivedata"
+        minSdkVersion 19
+        targetSdkVersion 29
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    signingConfigs {
+        def password = 'com.sole.peso'
+        def alias = 'release'
+        def filePath = '../demo/key/release/release_key.jks'  //如  ../facesharp.jks   //签名文件路径
+        def passworddebug = 'com.sole.peso'
+        def aliasdebug = 'debug'
+        def filePathdebug = '../demo/key/debug/debug_key.jks'
+
+        debug {
+            keyAlias aliasdebug
+            keyPassword passworddebug
+            storeFile file(filePathdebug)
+            storePassword(passworddebug)
+        }
+        release {
+            keyAlias alias
+            keyPassword password
+            storeFile file(filePath)
+            storePassword(password)
+        }
+    }
+
+    buildTypes {
+        debug {
+            buildConfigField "boolean", "LOG_DEBUG", "true"
+            buildConfigField "boolean", "USE_CANARY", "true"
+            minifyEnabled false
+            signingConfig signingConfigs.debug
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            //测试环境8100
+//            buildConfigField "String", "IP_URL", '"https://testphl.nowrupiah.com"'
+            //测试环境8300
+            buildConfigField "String", "IP_URL", '"https://yscphl.nowrupiah.com"'
+            buildConfigField "String", "IP_Config", '"eyJlbmNyeXB0aW9uIjpudWxsLCJvcyI6IjIiLCJ2ZXJzaW9uIjoieHh4X25OeWlqQjVqTjNkTTRJYnhfZmF0Ym95XzIiLCJjaGFubmVsIjoiY2JlMTdmMWU4MjY0NGNkYzhhMjBkODM3NTQ5ZTQ1NzgiLCJyZWdQbGF0Zm9ybSI6Imdvb2dsZS1wbGF5In0=.99877f3ac54be7fff38555f1b684e1f314a26f3f"'
+        }
+
+        release {
+            buildConfigField "boolean", "LOG_DEBUG", "false"
+            buildConfigField "boolean", "USE_CANARY", "false"
+            minifyEnabled true
+            shrinkResources true
+            zipAlignEnabled true
+            signingConfig signingConfigs.release
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+
+            buildConfigField "String", "IP_URL", '"https://glplhax.pesogogo.xyz"'
+            buildConfigField "String", "IP_Config", '"eyJlbmNyeXB0aW9uIjpudWxsLCJvcyI6IjIiLCJ2ZXJzaW9uIjoieHh4X25OeWlqQjVqTjNkTTRJYnhfZmF0Ym95XzIiLCJjaGFubmVsIjoiY2JlMTdmMWU4MjY0NGNkYzhhMjBkODM3NTQ5ZTQ1NzgiLCJyZWdQbGF0Zm9ybSI6Imdvb2dsZS1wbGF5In0=.99877f3ac54be7fff38555f1b684e1f314a26f3f"'
+        }
+    }
+    compileOptions {
+        sourceCompatibility = 1.8
+        targetCompatibility = 1.8
+    }
+
+    applicationVariants.all { variant ->
+        variant.outputs.all { output ->
+            def releaseApkName = "XXXX-${variant.flavorName}-${variant.buildType.name}-${variant.versionName}-${variant.versionCode}-${getTime()}.apk"
+            outputFileName = releaseApkName
+        }
+    }
+
+
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation 'androidx.appcompat:appcompat:1.1.0'
+    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'androidx.test:runner:1.2.0'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
+
+    implementation 'com.squareup.retrofit2:retrofit:2.6.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.6.0'
+    implementation files('libs/BASE64.jar')
+    implementation 'com.squareup.okhttp3:logging-interceptor:4.1.0'
+    implementation 'cn.bingoogolapple:bga-banner:2.2.6@aar'
+
+}
